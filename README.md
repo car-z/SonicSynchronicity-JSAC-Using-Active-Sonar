@@ -1,4 +1,5 @@
 # hand-gesture-sensing
 CMU REU Project: ongoing  
 
-Created signal processing pipeline for FMCW chirps. Now working on creating a pipeline for OFDM pulses.
+Signal processing pipeline to create and process FMCW chirps for sensing. 
+Also signal processing piepline to create and process OFDM chirps for accurate sensing.
