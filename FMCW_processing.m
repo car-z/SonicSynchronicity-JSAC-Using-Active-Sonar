@@ -1,7 +1,13 @@
+% OLD - DO NOT USE
+%
+%
+%
+% OLD - DO NOT USE
+
 clear
 close all
 
-filename = 'hand gestures/by speaker/chirp21-stationaryHigh-uma8.wav';
+filename = 'hand gestures/by speaker/chirp21-downUp2-uma8.wav';
 
 %% -------- CONSTANTS ------------------------------
 c = 343;                % Speed of sound (m/s)

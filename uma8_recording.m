@@ -4,7 +4,7 @@ close all
 % Setup parameters
 fs = 48000;         % Sampling rate (UMA-8 default)
 frameLength = 2048; % Block size for reading
-duration = 4;      % Recording duration in seconds
+duration = 5;      % Recording duration in seconds
 numChannels = 8;    % UMA-8 has 7 microphones + 1 ref channel (if present)
 
 % Create device reader
@@ -17,6 +17,10 @@ deviceReader = audioDeviceReader('SampleRate', fs, ...
 numFrames = floor((fs * duration) / frameLength);
 audioData = zeros(numFrames * frameLength, numChannels);
 
+disp('Initializing...');
+% pause
+pause(2);
+
 % Record loop
 disp('Recording...');
 for i = 1:numFrames
@@ -25,31 +29,31 @@ for i = 1:numFrames
 end
 disp('Recording finished.');
 
-% %Compute time vector and average signal
-% t = (0:size(audioData,1)-1) / fs;
-% x_combined = mean(audioData, 2);
+%Compute time vector and average signal
+t = (0:size(audioData,1)-1) / fs;
+x_combined = mean(audioData, 2);
+
+% Side-by-side layout: left = waveforms, right = spectrogram
+figure;
+set(gcf, 'Position', [200, 100, 1400, 700]);  % Wider figure for side-by-side layout
+
+% Left column: channel waveforms
+for ch = 1:numChannels
+    subplot(numChannels, 2, (ch-1)*2 + 1);  % Left side of each row
+    plot(t, audioData(:, ch));
+    xlabel('Time (s)');
+    ylabel(sprintf('Ch %d', ch));
+    title(sprintf('Waveform - Channel %d', ch));
+end
 % 
-% % Side-by-side layout: left = waveforms, right = spectrogram
-% figure;
-% set(gcf, 'Position', [200, 100, 1400, 700]);  % Wider figure for side-by-side layout
-% 
-% % Left column: channel waveforms
-% for ch = 1:numChannels
-%     subplot(numChannels, 2, (ch-1)*2 + 1);  % Left side of each row
-%     plot(t, audioData(:, ch));
-%     xlabel('Time (s)');
-%     ylabel(sprintf('Ch %d', ch));
-%     title(sprintf('Waveform - Channel %d', ch));
-% end
-% % 
-% % Right column: large spectrogram (spans rows)
-% subplot(1, 2, 2);  % Right half of figure
-% spectrogram(x_combined, hamming(1024), 768, 1024, fs, 'yaxis');
-% title('Spectrogram - Averaged Across 8 Channels');
-% xlabel('Time (s)');
-% ylabel('Frequency (kHz)');
-% 
-% sgtitle('Waveforms and Spectrogram Side-by-Side');
+% Right column: large spectrogram (spans rows)
+subplot(1, 2, 2);  % Right half of figure
+spectrogram(x_combined, hamming(1024), 768, 1024, fs, 'yaxis');
+title('Spectrogram - Averaged Across 8 Channels');
+xlabel('Time (s)');
+ylabel('Frequency (kHz)');
+
+sgtitle('Waveforms and Spectrogram Side-by-Side');
 % 
 % figure;
 % spectrogram(x_combined, hamming(2048), 1536, 2048, fs, 'yaxis');
@@ -62,8 +66,8 @@ disp('Recording finished.');
 % n = length(ref);
 % f = (0:floor(n/2)-1) * fs / n;     % Frequency vector in Hz
 
-% figure(1);
-% set(gcf, 'Position', [100, 100, 1200, 600])f;
+% figure(2);
+% set(gcf, 'Position', [100, 100, 1200, 600]);
 % tiledlayout(2,4);
 % for i = 1:8
 %     nexttile;
@@ -72,8 +76,8 @@ disp('Recording finished.');
 %     title(sprintf('Spectrogram - Channel %d', i));
 %     xlabel('Time (s)');
 %     ylabel('Frequency (kHz)');
-%     % xlim([.05 0.35]);
-%     % ylim([15 24]);
+%     xlim([1 1.07]);
+%     ylim([17 21]);
 % end
 
 % figure(2);
@@ -101,6 +105,6 @@ disp('Recording finished.');
 %     title(sprintf('Fourier Transform - Channel %d', i));
 % end
 
-%audiowrite('hand gestures/chirp21-stationaryHighBySpeaker-uma8.wav', audioData, fs);
+audiowrite('test_new_setup_multihand.wav', audioData, fs);
 
-FMCWProcessing(audioData);
+%FMCWProcessing(audioData);
