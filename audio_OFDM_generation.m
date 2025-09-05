@@ -5,11 +5,11 @@ close all;
 %% OFDM Paramters
 Fs = 48000; % sampling rate (Hz)
 total_time = 120; % duration of signal (seconds)
-symbol_len = 128; % OFDM symbol length (samples)
+symbol_len = 256; % OFDM symbol length (samples)
 cyclic_len = 20; % (samples)
 separation_len = 200; % each pulse separated by 400 samples
 preamble_len = 64; % samples, adjust as needed
-len = symbol_len + cyclic_len + separation_len; % total length of pulse (samples)
+len = symbol_len + cyclic_len + separation_len + preamble_len; % total length of pulse (samples)
 T = len / Fs; % duration of one pulse (seconds)
 num_repititions = floor(total_time/T); % number of OFDM pulses per signal
 
@@ -74,7 +74,7 @@ f_end = 20000;   % Hz
 t_preamble = (0:preamble_len-1) ./ Fs;
 preamble = chirp(t_preamble, f_start, t_preamble(end), f_end, 'linear')';
 preamble = ApplyFadingInStartAndEndOfSignal(preamble, 0.8);
-    
+
 pulse_and_preamble = [preamble; full_pulse];
 
 %% generate repeated OFDM pulses
@@ -83,19 +83,19 @@ signal = reshape(signal, [], 1);
 
 %% audiowrite
 signal = signal / max(abs(signal));  % Normalize to full scale
-%audiowrite('OFDM signals/ofdm_pulse_348_prefix_preamble_no_fading.wav', signal, Fs);
+audiowrite('OFDM signals/ofdm_pulse_256symbol.wav', signal, Fs);
 
 %% plot
-t = (0:len + preamble_len -1)/Fs*1000;  % in milliseconds
+t = (0:len-1)/Fs*1000;  % in milliseconds
 figure(1);
 plot(t, pulse_and_preamble);
-xlabel('Time (ms)');
-ylabel('Amplitude');
-title('One OFDM Pulse (with cyclic prefix)');
+xlabel('Time (ms)','FontSize',18);
+ylabel('Amplitude', 'FontSize',18);
+% title('OFDM Symbol','FontSize',18);
 grid on;
 
 figure(2);
 pspectrum(signal(1:10*(preamble_len +len)),Fs,'spectrogram', ...
     'FrequencyLimits',[0 24000]);
 title('Generated Chirp');
-set(gca,'linewidth',2,'fontsize',26,'fontname','Arial');
+set(gca,'linewidth',2,'fontsize',18,'fontname','Arial');
